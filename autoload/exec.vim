@@ -29,14 +29,32 @@ function! s:NewScratchBuffer(name, ft) abort
 endfunction
 
 function! s:VimExecOutCb(job, message) dict abort
+  let tailf = 0
+  if line('.') == line('$')
+    let tailf = 1
+  endif
   call appendbufline(self.buf, '$', a:message)
+  if tailf
+    normal G
+  endif
 endfunction
 
 function! s:NeoVimExecExitCb(job, code, event) dict abort
+  let tailf = 0
+  if line('.') == line('$')
+    let tailf = 1
+  endif
   call appendbufline(self.buf, '$', ['', '> returned ' . a:code])
+  if tailf
+    normal G
+  endif
 endfunction
 
 function! s:NeoVimExecOutCb(job, message, event) dict abort
+  let tailf = 0
+  if line('.') == line('$')
+    let tailf = 1
+  endif
   let stripped = []
   for ln in a:message
     let str = trim(ln, "\r")
@@ -45,6 +63,9 @@ function! s:NeoVimExecOutCb(job, message, event) dict abort
     endif
   endfor
   call appendbufline(self.buf, '$', stripped)
+  if tailf
+    normal G
+  endif
 endfunction
 
 "
